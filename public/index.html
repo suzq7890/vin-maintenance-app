@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vehicle Maintenance Guide</title>
+  <title>Your car, your questions.</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -44,15 +44,6 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .header-eyebrow {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      color: var(--text-3);
-      margin-bottom: 8px;
-    }
-
     .header h1 { font-size: 26px; font-weight: 600; letter-spacing: -0.5px; }
 
     .header p {
@@ -62,6 +53,7 @@
       line-height: 1.6;
     }
 
+    /* Form */
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -129,6 +121,7 @@
 
     .field-hint { font-size: 11px; color: var(--text-3); margin-top: 2px; }
 
+    /* States */
     .error-msg {
       font-size: 14px;
       color: var(--red-text);
@@ -158,6 +151,7 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* Vehicle card */
     .vehicle-card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -202,6 +196,66 @@
 
     .manual-btn:hover { background: var(--border); }
 
+    /* Mode selector cards */
+    .mode-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 1.25rem;
+    }
+
+    .mode-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.1rem 1.25rem;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      text-align: left;
+    }
+
+    .mode-card:hover {
+      border-color: var(--border-strong);
+      background: var(--surface);
+    }
+
+    .mode-card.active {
+      border-color: var(--accent);
+      background: var(--surface);
+    }
+
+    .mode-card-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--surface-2);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      color: var(--text-2);
+    }
+
+    .mode-card.active .mode-card-icon {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .mode-card-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+
+    .mode-card-desc {
+      font-size: 12px;
+      color: var(--text-3);
+      line-height: 1.5;
+    }
+
+    .mode-card.active .mode-card-desc { color: var(--text-2); }
+
+    /* Mileage status */
     .mileage-status {
       display: flex;
       align-items: center;
@@ -216,17 +270,15 @@
     }
 
     .mileage-status strong { color: var(--text); }
-
     .status-legend { display: flex; gap: 14px; margin-left: auto; flex-wrap: wrap; }
-
     .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-3); }
-
     .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .dot-ok { background: var(--green-text); }
     .dot-soon { background: var(--amber-text); }
     .dot-overdue { background: var(--red-text); }
 
-    .maintenance { margin-top: 2rem; }
+    /* Maintenance sections */
+    .maintenance { margin-top: 1.5rem; }
     .section { margin-bottom: 2rem; }
 
     .section-header {
@@ -277,7 +329,7 @@
 
     /* Chat */
     .chat-section {
-      margin-top: 2.5rem;
+      margin-top: 1.5rem;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
@@ -293,31 +345,22 @@
     }
 
     .chat-header-text { flex: 1; }
-
-    .chat-title {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .chat-subtitle {
-      font-size: 12px;
-      color: var(--text-3);
-      margin-top: 1px;
-    }
+    .chat-title { font-size: 14px; font-weight: 600; }
+    .chat-subtitle { font-size: 12px; color: var(--text-3); margin-top: 1px; }
 
     .chat-messages {
       padding: 16px 18px;
       display: flex;
       flex-direction: column;
       gap: 14px;
-      min-height: 120px;
+      min-height: 160px;
       max-height: 420px;
       overflow-y: auto;
     }
 
     .chat-empty {
       text-align: center;
-      padding: 2rem 1rem;
+      padding: 1.5rem 1rem;
       color: var(--text-3);
       font-size: 13px;
       line-height: 1.7;
@@ -389,7 +432,6 @@
       gap: 8px;
       padding: 12px 18px;
       border-top: 1px solid var(--border);
-      background: var(--surface);
     }
 
     .chat-input {
@@ -430,6 +472,7 @@
     .chat-send-btn:hover { opacity: 0.85; }
     .chat-send-btn:disabled { opacity: 0.35; cursor: default; }
 
+    /* Empty state */
     .empty-state {
       text-align: center;
       padding: 4rem 1rem 2rem;
@@ -440,6 +483,7 @@
 
     .empty-icon { font-size: 36px; margin-bottom: 14px; display: block; }
 
+    /* Disclosure */
     .disclosure {
       display: flex;
       align-items: flex-start;
@@ -456,6 +500,7 @@
 
     @media (max-width: 540px) {
       .form-row { grid-template-columns: 1fr; }
+      .mode-cards { grid-template-columns: 1fr; }
       .vehicle-card { flex-direction: column; align-items: flex-start; }
       .mileage-status { flex-direction: column; align-items: flex-start; }
       .status-legend { margin-left: 0; }
@@ -467,7 +512,6 @@
 <div class="app">
 
   <div class="header">
-    
     <h1>Your car, your questions.</h1>
     <p>Enter your VIN to get your car's maintenance schedule, or chat with an AI that uses your car's owner's manual to answer your service questions in plain English.</p>
   </div>
@@ -488,11 +532,13 @@
   <button class="lookup-btn" id="lookupBtn" onclick="handleLookup()">Look up vehicle</button>
 
   <div id="errorMsg" class="error-msg" style="display:none;"></div>
+
   <div id="loadingState" class="loading" style="display:none;">
     <div class="loading-spinner"></div>
-    Decoding VIN and building your maintenance schedule&hellip;
+    Looking up your vehicle&hellip;
   </div>
 
+  <!-- Vehicle card -->
   <div id="vehicleCard" class="vehicle-card" style="display:none;">
     <div>
       <div class="vehicle-eyebrow">Vehicle identified</div>
@@ -508,6 +554,31 @@
     </a>
   </div>
 
+  <!-- Mode selector -->
+  <div id="modeCards" class="mode-cards" style="display:none;">
+    <div class="mode-card" id="modeSchedule" onclick="selectMode('schedule')">
+      <div class="mode-card-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="1" y="2" width="14" height="13" rx="2" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M5 1v2M11 1v2M1 6h14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          <path d="M4 10h2M7 10h2M10 10h2M4 12.5h2M7 12.5h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="mode-card-title">Maintenance schedule</div>
+      <div class="mode-card-desc">See what's due based on your mileage and manufacturer guidelines.</div>
+    </div>
+    <div class="mode-card" id="modeChat" onclick="selectMode('chat')">
+      <div class="mode-card-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M2 3a1 1 0 011-1h10a1 1 0 011 1v7a1 1 0 01-1 1H6l-4 3V3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="mode-card-title">Ask a question</div>
+      <div class="mode-card-desc">Chat with an AI advisor about your specific vehicle using your owner's manual.</div>
+    </div>
+  </div>
+
+  <!-- Mileage status (schedule mode only) -->
   <div id="mileageStatus" class="mileage-status" style="display:none;">
     <span>Showing status for <strong id="mileageDisplay"></strong> miles</span>
     <div class="status-legend">
@@ -517,6 +588,7 @@
     </div>
   </div>
 
+  <!-- Maintenance schedule -->
   <div id="maintenanceSections" class="maintenance" style="display:none;">
     <div class="section">
       <div class="section-header">
@@ -556,7 +628,7 @@
       </svg>
       <div class="chat-header-text">
         <div class="chat-title" id="chatTitle">Ask your vehicle advisor</div>
-        <div class="chat-subtitle" id="chatSubtitle">Powered by AI — ask anything about your vehicle</div>
+        <div class="chat-subtitle">Ask about maintenance, warning lights, or shop recommendations</div>
       </div>
     </div>
     <div class="chat-messages" id="chatMessages">
@@ -627,58 +699,130 @@
     'jaguar': 'https://www.jaguarusa.com/owners/index.html',
   };
 
-  // Chat state
   let chatMessages = [];
   let currentVehicle = null;
+  let currentMileage = null;
   let isChatLoading = false;
+  let maintenanceLoaded = false;
+  let activeMode = null;
 
-  // Suggested questions — generated after vehicle is decoded
   function getSuggestions(vehicle) {
-    const v = `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
     return [
       `Does my ${vehicle.make} really need a transmission flush?`,
       `What does the maintenance minder mean on my ${vehicle.make}?`,
-      `Is synthetic oil required for my ${v}?`,
+      `Is synthetic oil required for my ${vehicle.year} ${vehicle.make} ${vehicle.model}?`,
       `My shop recommends a fuel injection cleaning — do I need it?`,
     ];
   }
 
-  function getMileageStatus(intervalMiles, currentMileage) {
-    if (!currentMileage || !intervalMiles || intervalMiles === 0) return null;
-    const pct = (currentMileage % intervalMiles) / intervalMiles;
+  function getMileageStatus(intervalMiles, mileage) {
+    if (!mileage || !intervalMiles || intervalMiles === 0) return null;
+    const pct = (mileage % intervalMiles) / intervalMiles;
     if (pct >= 1.0) return 'overdue';
     if (pct >= 0.7) return 'soon';
     return 'ok';
   }
 
-  document.getElementById('vinInput').addEventListener('input', function () {
-    const val = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
-    this.value = val;
-    document.getElementById('vinHint').textContent =
-      val.length + ' / 17  ·  Found on your dashboard, door jamb, or title';
-  });
+  function selectMode(mode) {
+    activeMode = mode;
 
-  document.getElementById('vinInput').addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') handleLookup();
-  });
+    document.getElementById('modeSchedule').classList.toggle('active', mode === 'schedule');
+    document.getElementById('modeChat').classList.toggle('active', mode === 'chat');
 
-  document.getElementById('mileageInput').addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') handleLookup();
-  });
+    if (mode === 'schedule') {
+      // Load maintenance data if not already loaded
+      if (!maintenanceLoaded) {
+        loadMaintenance();
+      } else {
+        document.getElementById('maintenanceSections').style.display = 'block';
+        if (currentMileage) document.getElementById('mileageStatus').style.display = 'flex';
+      }
+      document.getElementById('chatSection').style.display = 'none';
+    } else {
+      document.getElementById('maintenanceSections').style.display = 'none';
+      document.getElementById('mileageStatus').style.display = 'none';
+      document.getElementById('chatSection').style.display = 'block';
+    }
+  }
 
-  document.getElementById('chatInput').addEventListener('keydown', function (e) {
-    if (e.key === 'Enter' && !isChatLoading) sendMessage();
-  });
+  async function loadMaintenance() {
+    const vin = document.getElementById('vinInput').value.trim().toUpperCase();
 
-  function renderTasks(id, tasks, currentMileage) {
+    // Show a small inline loading state inside the maintenance area
+    document.getElementById('maintenanceSections').style.display = 'block';
+    document.getElementById('maintenanceSections').innerHTML = `
+      <div class="loading" style="padding:2rem;">
+        <div class="loading-spinner"></div>
+        Building your maintenance schedule&hellip;
+      </div>`;
+
+    try {
+      const res = await fetch('/api/maintenance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ vin }),
+      });
+
+      if (!res.ok) throw new Error('Server error');
+      const result = await res.json();
+
+      if (!result.valid) throw new Error('Could not load maintenance data');
+
+      // Restore section HTML
+      document.getElementById('maintenanceSections').innerHTML = `
+        <div class="section">
+          <div class="section-header">
+            <svg class="section-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.3"/><path d="M10 6v4l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            <span class="section-label">Oil &amp; fluids</span>
+          </div>
+          <div class="task-grid" id="oilTasks"></div>
+        </div>
+        <div class="section">
+          <div class="section-header">
+            <svg class="section-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.3"/><circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M10 3v2M10 15v2M3 10h2M15 10h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            <span class="section-label">Tires &amp; brakes</span>
+          </div>
+          <div class="task-grid" id="tireTasks"></div>
+        </div>
+        <div class="section">
+          <div class="section-header">
+            <svg class="section-icon" viewBox="0 0 20 20" fill="none"><rect x="3" y="7" width="14" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M7 7V5.5a3 3 0 016 0V7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M7 11h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            <span class="section-label">Filters &amp; belts</span>
+          </div>
+          <div class="task-grid" id="filterTasks"></div>
+        </div>
+        <div class="section">
+          <div class="section-header">
+            <svg class="section-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M10 4v12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.3"/></svg>
+            <span class="section-label">Scheduled service intervals</span>
+          </div>
+          <div class="task-grid" id="serviceTasks"></div>
+        </div>`;
+
+      renderTasks('oilTasks', result.oil, currentMileage);
+      renderTasks('tireTasks', result.tires, currentMileage);
+      renderTasks('filterTasks', result.filters, currentMileage);
+      renderTasks('serviceTasks', result.service, currentMileage);
+
+      if (currentMileage) document.getElementById('mileageStatus').style.display = 'flex';
+      maintenanceLoaded = true;
+
+    } catch (err) {
+      document.getElementById('maintenanceSections').innerHTML = `
+        <div class="error-msg" style="margin:0;">Could not load maintenance schedule. Please try again.</div>`;
+    }
+  }
+
+  function renderTasks(id, tasks, mileage) {
     const el = document.getElementById(id);
+    if (!el) return;
     el.innerHTML = (tasks || []).map(t => {
-      const status = getMileageStatus(t.intervalMiles, currentMileage);
+      const status = getMileageStatus(t.intervalMiles, mileage);
       let badgeHtml = '';
       if (status === 'ok') badgeHtml = '<span class="badge badge-ok">On schedule</span>';
       else if (status === 'soon') badgeHtml = '<span class="badge badge-soon">Due soon</span>';
       else if (status === 'overdue') badgeHtml = '<span class="badge badge-overdue">Overdue</span>';
-      else if (currentMileage && (!t.intervalMiles || t.intervalMiles === 0)) badgeHtml = '<span class="badge badge-time">Check date</span>';
+      else if (mileage && (!t.intervalMiles || t.intervalMiles === 0)) badgeHtml = '<span class="badge badge-time">Check date</span>';
       return `<div class="task-card">
         <div class="task-name">${t.name}</div>
         <div class="task-interval">${t.interval}</div>
@@ -703,15 +847,13 @@
     }
 
     empty.style.display = 'none';
-
-    // Remove existing message elements (keep empty div)
     Array.from(container.children).forEach(child => {
       if (child.id !== 'chatEmpty') child.remove();
     });
 
     chatMessages.forEach(msg => {
       const div = document.createElement('div');
-      div.className = `message message-${msg.role} ${msg.thinking ? 'message-thinking' : ''}`;
+      div.className = `message message-${msg.role}${msg.thinking ? ' message-thinking' : ''}`;
       div.innerHTML = `<div class="message-bubble">${msg.content.replace(/\n/g, '<br>')}</div>`;
       container.appendChild(div);
     });
@@ -732,7 +874,6 @@
     chatMessages.push({ role: 'assistant', content: 'Thinking...', thinking: true });
     renderChatMessages();
 
-    // Build messages array for API (exclude thinking placeholder)
     const apiMessages = chatMessages
       .filter(m => !m.thinking)
       .map(m => ({ role: m.role, content: m.content }));
@@ -745,12 +886,8 @@
       });
 
       const data = await res.json();
-
-      // Remove thinking placeholder
       chatMessages = chatMessages.filter(m => !m.thinking);
-
       if (!res.ok) throw new Error(data.error || 'Something went wrong');
-
       chatMessages.push({ role: 'assistant', content: data.reply });
 
     } catch (err) {
@@ -768,10 +905,21 @@
     sendMessage();
   }
 
+  document.getElementById('vinInput').addEventListener('input', function () {
+    const val = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    this.value = val;
+    document.getElementById('vinHint').textContent =
+      val.length + ' / 17  ·  Found on your dashboard, door jamb, or title';
+  });
+
+  document.getElementById('vinInput').addEventListener('keydown', e => { if (e.key === 'Enter') handleLookup(); });
+  document.getElementById('mileageInput').addEventListener('keydown', e => { if (e.key === 'Enter') handleLookup(); });
+  document.getElementById('chatInput').addEventListener('keydown', e => { if (e.key === 'Enter' && !isChatLoading) sendMessage(); });
+
   async function handleLookup() {
     const vin = document.getElementById('vinInput').value.trim().toUpperCase();
     const mileageRaw = document.getElementById('mileageInput').value.trim();
-    const currentMileage = mileageRaw ? parseInt(mileageRaw, 10) : null;
+    currentMileage = mileageRaw ? parseInt(mileageRaw, 10) : null;
 
     document.getElementById('errorMsg').style.display = 'none';
 
@@ -785,26 +933,28 @@
     document.getElementById('loadingState').style.display = 'block';
     document.getElementById('emptyState').style.display = 'none';
     document.getElementById('vehicleCard').style.display = 'none';
+    document.getElementById('modeCards').style.display = 'none';
     document.getElementById('mileageStatus').style.display = 'none';
     document.getElementById('maintenanceSections').style.display = 'none';
     document.getElementById('chatSection').style.display = 'none';
 
-    // Reset chat
+    // Reset state
     chatMessages = [];
     currentVehicle = null;
+    maintenanceLoaded = false;
+    activeMode = null;
+    document.getElementById('modeSchedule').classList.remove('active');
+    document.getElementById('modeChat').classList.remove('active');
 
     try {
+      // Just decode the VIN — don't load maintenance yet
       const res = await fetch('/api/maintenance', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ vin }),
       });
 
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || 'Server error');
-      }
-
+      if (!res.ok) throw new Error('Server error');
       const result = await res.json();
 
       document.getElementById('loadingState').style.display = 'none';
@@ -817,16 +967,19 @@
         return;
       }
 
-      // Store vehicle for chat
       currentVehicle = {
-        year: result.year,
-        make: result.make,
-        model: result.model,
-        trim: result.trim,
-        engine: result.engine,
-        drive: result.drive,
-        fuel: result.fuel,
+        year: result.year, make: result.make, model: result.model,
+        trim: result.trim, engine: result.engine, drive: result.drive, fuel: result.fuel,
       };
+
+      // Pre-cache maintenance data from this response
+      if (result.oil) {
+        renderTasks('oilTasks', result.oil, currentMileage);
+        renderTasks('tireTasks', result.tires, currentMileage);
+        renderTasks('filterTasks', result.filters, currentMileage);
+        renderTasks('serviceTasks', result.service, currentMileage);
+        maintenanceLoaded = true;
+      }
 
       document.getElementById('vehicleTitle').textContent = `${result.year} ${result.make} ${result.model}`;
       const sub = [result.trim, result.engine, result.drive].filter(Boolean).join(' · ');
@@ -838,27 +991,16 @@
 
       if (currentMileage) {
         document.getElementById('mileageDisplay').textContent = currentMileage.toLocaleString();
-        document.getElementById('mileageStatus').style.display = 'flex';
       }
 
-      renderTasks('oilTasks', result.oil, currentMileage);
-      renderTasks('tireTasks', result.tires, currentMileage);
-      renderTasks('filterTasks', result.filters, currentMileage);
-      renderTasks('serviceTasks', result.service, currentMileage);
-      document.getElementById('maintenanceSections').style.display = 'block';
-
-      // Set up chat
-      const vehicleName = `${result.year} ${result.make} ${result.model}`;
-      document.getElementById('chatTitle').textContent = `Ask about your ${vehicleName}`;
-      document.getElementById('chatSubtitle').textContent = 'Ask about maintenance, warning lights, or shop recommendations';
-
-      // Render suggestions
-      const suggestions = getSuggestions(currentVehicle);
-      document.getElementById('chatSuggestions').innerHTML = suggestions
+      // Set up chat suggestions
+      document.getElementById('chatTitle').textContent = `Ask about your ${result.year} ${result.make} ${result.model}`;
+      document.getElementById('chatSuggestions').innerHTML = getSuggestions(currentVehicle)
         .map(s => `<button class="suggestion-btn" onclick="useSuggestion('${s.replace(/'/g, "\\'")}')">${s}</button>`)
         .join('');
 
-      document.getElementById('chatSection').style.display = 'block';
+      // Show mode cards
+      document.getElementById('modeCards').style.display = 'grid';
 
     } catch (err) {
       document.getElementById('loadingState').style.display = 'none';
