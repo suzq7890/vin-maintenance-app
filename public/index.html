@@ -53,11 +53,7 @@
       margin-bottom: 8px;
     }
 
-    .header h1 {
-      font-size: 26px;
-      font-weight: 600;
-      letter-spacing: -0.5px;
-    }
+    .header h1 { font-size: 26px; font-weight: 600; letter-spacing: -0.5px; }
 
     .header p {
       font-size: 14px;
@@ -67,15 +63,13 @@
     }
 
     .form-row {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 12px;
-      align-items: flex-end;
-      flex-wrap: wrap;
+      margin-bottom: 10px;
     }
 
-    .field { display: flex; flex-direction: column; gap: 6px; }
-    .field-vin { flex: 2; min-width: 200px; }
-    .field-mileage { flex: 1; min-width: 130px; }
+    .form-field { display: flex; flex-direction: column; gap: 6px; }
 
     .field-label {
       font-size: 12px;
@@ -92,9 +86,9 @@
       border-radius: var(--radius-md);
       background: var(--surface);
       color: var(--text);
+      font-size: 15px;
       outline: none;
       transition: border-color 0.15s, box-shadow 0.15s;
-      font-size: 15px;
       width: 100%;
     }
 
@@ -104,23 +98,21 @@
       text-transform: uppercase;
     }
 
-    .vin-input::placeholder {
-      letter-spacing: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-      font-size: 14px;
-      color: var(--text-3);
-    }
-
-    .mileage-input::placeholder { color: var(--text-3); font-size: 14px; }
-
     .vin-input:focus, .mileage-input:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(26,25,23,0.08);
     }
 
+    .vin-input::placeholder, .mileage-input::placeholder {
+      color: var(--text-3);
+      letter-spacing: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 14px;
+    }
+
     .lookup-btn {
+      width: 100%;
       height: 46px;
-      padding: 0 22px;
       background: var(--accent);
       color: #fff;
       border: none;
@@ -128,20 +120,14 @@
       font-size: 14px;
       font-weight: 500;
       cursor: pointer;
-      white-space: nowrap;
       transition: opacity 0.15s;
-      flex-shrink: 0;
-      align-self: flex-end;
+      margin-top: 4px;
     }
 
     .lookup-btn:hover { opacity: 0.85; }
     .lookup-btn:disabled { opacity: 0.35; cursor: default; }
 
-    .form-hint {
-      font-size: 12px;
-      color: var(--text-3);
-      margin-top: 6px;
-    }
+    .field-hint { font-size: 11px; color: var(--text-3); margin-top: 2px; }
 
     .error-msg {
       font-size: 14px;
@@ -216,6 +202,30 @@
 
     .manual-btn:hover { background: var(--border); }
 
+    .mileage-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 1.25rem;
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      color: var(--text-2);
+    }
+
+    .mileage-status strong { color: var(--text); }
+
+    .status-legend { display: flex; gap: 14px; margin-left: auto; flex-wrap: wrap; }
+
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-3); }
+
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .dot-ok { background: var(--green-text); }
+    .dot-soon { background: var(--amber-text); }
+    .dot-overdue { background: var(--red-text); }
+
     .maintenance { margin-top: 2rem; }
     .section { margin-bottom: 2rem; }
 
@@ -238,11 +248,7 @@
       color: var(--text-2);
     }
 
-    .task-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-      gap: 10px;
-    }
+    .task-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; }
 
     .task-card {
       background: var(--surface);
@@ -253,13 +259,7 @@
 
     .task-name { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
     .task-interval { font-size: 12px; color: var(--text-2); }
-
-    .task-note {
-      font-size: 12px;
-      color: var(--text-3);
-      margin-top: 8px;
-      line-height: 1.55;
-    }
+    .task-note { font-size: 12px; color: var(--text-3); margin-top: 8px; line-height: 1.55; }
 
     .badge {
       display: inline-block;
@@ -271,22 +271,164 @@
     }
 
     .badge-ok { background: var(--green-bg); color: var(--green-text); }
-    .badge-warning { background: var(--amber-bg); color: var(--amber-text); }
+    .badge-soon { background: var(--amber-bg); color: var(--amber-text); }
     .badge-overdue { background: var(--red-bg); color: var(--red-text); }
-    .badge-time { background: var(--surface-2); color: var(--text-3); }
+    .badge-time { background: var(--surface-2); color: var(--text-2); }
 
-    .mileage-banner {
+    /* Chat */
+    .chat-section {
+      margin-top: 2.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .chat-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       gap: 10px;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: 10px 14px;
-      margin-bottom: 1.5rem;
-      font-size: 13px;
-      color: var(--text-2);
     }
+
+    .chat-header-text { flex: 1; }
+
+    .chat-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .chat-subtitle {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: 1px;
+    }
+
+    .chat-messages {
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 120px;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+
+    .chat-empty {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--text-3);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .chat-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 12px;
+    }
+
+    .suggestion-btn {
+      font-size: 12px;
+      padding: 6px 12px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--surface);
+      color: var(--text-2);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      text-align: left;
+    }
+
+    .suggestion-btn:hover {
+      background: var(--surface-2);
+      border-color: var(--border-strong);
+      color: var(--text);
+    }
+
+    .message {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      max-width: 85%;
+    }
+
+    .message-user { align-self: flex-end; align-items: flex-end; }
+    .message-assistant { align-self: flex-start; align-items: flex-start; }
+
+    .message-bubble {
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .message-user .message-bubble {
+      background: var(--accent);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .message-assistant .message-bubble {
+      background: var(--surface-2);
+      color: var(--text);
+      border-bottom-left-radius: 4px;
+    }
+
+    .message-thinking .message-bubble {
+      background: var(--surface-2);
+      color: var(--text-3);
+      font-style: italic;
+    }
+
+    .chat-input-row {
+      display: flex;
+      gap: 8px;
+      padding: 12px 18px;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    .chat-input {
+      flex: 1;
+      height: 40px;
+      padding: 0 14px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .chat-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(26,25,23,0.08);
+    }
+
+    .chat-input::placeholder { color: var(--text-3); }
+
+    .chat-send-btn {
+      height: 40px;
+      width: 40px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: opacity 0.15s;
+    }
+
+    .chat-send-btn:hover { opacity: 0.85; }
+    .chat-send-btn:disabled { opacity: 0.35; cursor: default; }
 
     .empty-state {
       text-align: center;
@@ -310,18 +452,14 @@
     }
 
     .disclosure svg { flex-shrink: 0; margin-top: 1px; color: var(--text-3); }
+    .disclosure p { font-size: 12px; color: var(--text-2); line-height: 1.65; }
 
-    .disclosure p {
-      font-size: 12px;
-      color: var(--text-2);
-      line-height: 1.65;
-    }
-
-    @media (max-width: 520px) {
-      .form-row { flex-direction: column; }
-      .field-vin, .field-mileage { min-width: 100%; }
-      .lookup-btn { width: 100%; height: 44px; }
+    @media (max-width: 540px) {
+      .form-row { grid-template-columns: 1fr; }
       .vehicle-card { flex-direction: column; align-items: flex-start; }
+      .mileage-status { flex-direction: column; align-items: flex-start; }
+      .status-legend { margin-left: 0; }
+      .message { max-width: 95%; }
     }
   </style>
 </head>
@@ -329,40 +467,25 @@
 <div class="app">
 
   <div class="header">
-    <div class="header-eyebrow">AI-powered</div>
-    <h1>Vehicle maintenance guide</h1>
-    <p>Enter your VIN to get a personalized maintenance schedule and a link to your owner's manual.</p>
+    
+    <h1>Your car, your questions.</h1>
+    <p>Enter your VIN to get your car's maintenance schedule, or chat with an AI that uses your car's owner's manual to answer your service questions in plain English.</p>
   </div>
 
-  <div style="margin-bottom: 0.5rem;">
-    <div class="form-row">
-      <div class="field field-vin">
-        <label class="field-label" for="vinInput">VIN</label>
-        <input
-          class="vin-input"
-          id="vinInput"
-          type="text"
-          maxlength="17"
-          placeholder="e.g. 5NPE34AF4KH757657"
-          autocomplete="off"
-          spellcheck="false"
-        />
-      </div>
-      <div class="field field-mileage">
-        <label class="field-label" for="mileageInput">Current mileage <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label>
-        <input
-          class="mileage-input"
-          id="mileageInput"
-          type="text"
-          inputmode="numeric"
-          placeholder="e.g. 47000"
-          autocomplete="off"
-        />
-      </div>
-      <button class="lookup-btn" id="lookupBtn" onclick="handleLookup()">Look up vehicle</button>
+  <div class="form-row">
+    <div class="form-field">
+      <label class="field-label" for="vinInput">VIN</label>
+      <input class="vin-input" id="vinInput" type="text" maxlength="17" placeholder="17-character VIN" autocomplete="off" spellcheck="false" />
+      <div class="field-hint" id="vinHint">Found on your dashboard, door jamb, or title</div>
     </div>
-    <div class="form-hint" id="vinHint">VIN is 17 characters &nbsp;·&nbsp; Found on your dashboard, door jamb, or vehicle title</div>
+    <div class="form-field">
+      <label class="field-label" for="mileageInput">Current mileage <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label>
+      <input class="mileage-input" id="mileageInput" type="number" min="0" max="999999" placeholder="e.g. 47000" />
+      <div class="field-hint">Used to estimate what's due</div>
+    </div>
   </div>
+
+  <button class="lookup-btn" id="lookupBtn" onclick="handleLookup()">Look up vehicle</button>
 
   <div id="errorMsg" class="error-msg" style="display:none;"></div>
   <div id="loadingState" class="loading" style="display:none;">
@@ -385,65 +508,77 @@
     </a>
   </div>
 
-  <div id="maintenanceSections" class="maintenance" style="display:none;">
-    <div id="mileageBanner" class="mileage-banner" style="display:none;">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-        <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2"/>
-        <path d="M7 4v3l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-      </svg>
-      <span id="mileageBannerText"></span>
+  <div id="mileageStatus" class="mileage-status" style="display:none;">
+    <span>Showing status for <strong id="mileageDisplay"></strong> miles</span>
+    <div class="status-legend">
+      <div class="legend-item"><div class="legend-dot dot-ok"></div>On schedule</div>
+      <div class="legend-item"><div class="legend-dot dot-soon"></div>Due soon</div>
+      <div class="legend-item"><div class="legend-dot dot-overdue"></div>Overdue</div>
     </div>
+  </div>
 
+  <div id="maintenanceSections" class="maintenance" style="display:none;">
     <div class="section">
       <div class="section-header">
-        <svg class="section-icon" viewBox="0 0 20 20" fill="none">
-          <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.3"/>
-          <path d="M10 6v4l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-        </svg>
+        <svg class="section-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.3"/><path d="M10 6v4l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
         <span class="section-label">Oil &amp; fluids</span>
       </div>
       <div class="task-grid" id="oilTasks"></div>
     </div>
-
     <div class="section">
       <div class="section-header">
-        <svg class="section-icon" viewBox="0 0 20 20" fill="none">
-          <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.3"/>
-          <circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.3"/>
-          <path d="M10 3v2M10 15v2M3 10h2M15 10h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-        </svg>
+        <svg class="section-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.3"/><circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M10 3v2M10 15v2M3 10h2M15 10h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
         <span class="section-label">Tires &amp; brakes</span>
       </div>
       <div class="task-grid" id="tireTasks"></div>
     </div>
-
     <div class="section">
       <div class="section-header">
-        <svg class="section-icon" viewBox="0 0 20 20" fill="none">
-          <rect x="3" y="7" width="14" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/>
-          <path d="M7 7V5.5a3 3 0 016 0V7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-          <path d="M7 11h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-        </svg>
+        <svg class="section-icon" viewBox="0 0 20 20" fill="none"><rect x="3" y="7" width="14" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M7 7V5.5a3 3 0 016 0V7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M7 11h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
         <span class="section-label">Filters &amp; belts</span>
       </div>
       <div class="task-grid" id="filterTasks"></div>
     </div>
-
     <div class="section">
       <div class="section-header">
-        <svg class="section-icon" viewBox="0 0 20 20" fill="none">
-          <path d="M4 10h12M10 4v12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-          <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.3"/>
-        </svg>
+        <svg class="section-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M10 4v12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.3"/></svg>
         <span class="section-label">Scheduled service intervals</span>
       </div>
       <div class="task-grid" id="serviceTasks"></div>
     </div>
   </div>
 
+  <!-- Chat -->
+  <div id="chatSection" class="chat-section" style="display:none;">
+    <div class="chat-header">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="flex-shrink:0;color:var(--text-3)">
+        <path d="M2 3a1 1 0 011-1h12a1 1 0 011 1v9a1 1 0 01-1 1H6l-4 3V3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+      </svg>
+      <div class="chat-header-text">
+        <div class="chat-title" id="chatTitle">Ask your vehicle advisor</div>
+        <div class="chat-subtitle" id="chatSubtitle">Powered by AI — ask anything about your vehicle</div>
+      </div>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-empty" id="chatEmpty">
+        <div>Ask anything about your vehicle — maintenance, warning lights, or whether a shop recommendation is legitimate.</div>
+        <div class="chat-suggestions" id="chatSuggestions"></div>
+      </div>
+    </div>
+    <div class="chat-input-row">
+      <input class="chat-input" id="chatInput" type="text" placeholder="Ask a question about your vehicle..." />
+      <button class="chat-send-btn" id="chatSendBtn" onclick="sendMessage()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M2 8h12M10 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
   <div id="emptyState" class="empty-state">
     <span class="empty-icon">&#128663;</span>
-    Enter your VIN above to get started.
+    Enter your VIN above to get started.<br>
+    Your VIN is found on your dashboard, driver-side door jamb, or vehicle title.
   </div>
 
   <div class="disclosure">
@@ -451,7 +586,7 @@
       <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2"/>
       <path d="M7 6v4M7 4.5v.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
     </svg>
-    <p>Maintenance information is AI-generated based on manufacturer guidelines and is provided for general reference only. Intervals and specifications may vary by driving conditions, region, and model variant. Always consult your owner's manual or a certified technician before performing safety-critical repairs.</p>
+    <p>Maintenance information and chat responses are AI-generated based on manufacturer guidelines and general automotive knowledge. Mileage status is estimated and does not account for your personal service history. Always consult your owner's manual or a certified technician before performing safety-critical repairs.</p>
   </div>
 
 </div>
@@ -492,16 +627,35 @@
     'jaguar': 'https://www.jaguarusa.com/owners/index.html',
   };
 
-  // Sanitize mileage input to numbers only
-  document.getElementById('mileageInput').addEventListener('input', function () {
-    this.value = this.value.replace(/[^0-9]/g, '');
-  });
+  // Chat state
+  let chatMessages = [];
+  let currentVehicle = null;
+  let isChatLoading = false;
+
+  // Suggested questions — generated after vehicle is decoded
+  function getSuggestions(vehicle) {
+    const v = `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+    return [
+      `Does my ${vehicle.make} really need a transmission flush?`,
+      `What does the maintenance minder mean on my ${vehicle.make}?`,
+      `Is synthetic oil required for my ${v}?`,
+      `My shop recommends a fuel injection cleaning — do I need it?`,
+    ];
+  }
+
+  function getMileageStatus(intervalMiles, currentMileage) {
+    if (!currentMileage || !intervalMiles || intervalMiles === 0) return null;
+    const pct = (currentMileage % intervalMiles) / intervalMiles;
+    if (pct >= 1.0) return 'overdue';
+    if (pct >= 0.7) return 'soon';
+    return 'ok';
+  }
 
   document.getElementById('vinInput').addEventListener('input', function () {
     const val = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
     this.value = val;
     document.getElementById('vinHint').textContent =
-      val.length + ' / 17 characters\u00a0\u00b7\u00a0 Found on your dashboard, door jamb, or vehicle title';
+      val.length + ' / 17  ·  Found on your dashboard, door jamb, or title';
   });
 
   document.getElementById('vinInput').addEventListener('keydown', function (e) {
@@ -512,25 +666,19 @@
     if (e.key === 'Enter') handleLookup();
   });
 
-  // Determine badge based on mileage position within interval
-  function getMileageBadge(currentMileage, intervalMiles) {
-    if (!currentMileage || !intervalMiles || intervalMiles === 0) {
-      return null; // time-based or no mileage entered
-    }
-    const remainder = currentMileage % intervalMiles;
-    const pct = remainder / intervalMiles;
-    if (pct >= 1.0) return { cls: 'badge-overdue', label: 'Overdue' };
-    if (pct >= 0.7) return { cls: 'badge-warning', label: 'Due soon' };
-    return { cls: 'badge-ok', label: 'On schedule' };
-  }
+  document.getElementById('chatInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !isChatLoading) sendMessage();
+  });
 
   function renderTasks(id, tasks, currentMileage) {
     const el = document.getElementById(id);
     el.innerHTML = (tasks || []).map(t => {
-      const badge = getMileageBadge(currentMileage, t.intervalMiles);
-      const badgeHtml = badge
-        ? `<span class="badge ${badge.cls}">${badge.label}</span>`
-        : '';
+      const status = getMileageStatus(t.intervalMiles, currentMileage);
+      let badgeHtml = '';
+      if (status === 'ok') badgeHtml = '<span class="badge badge-ok">On schedule</span>';
+      else if (status === 'soon') badgeHtml = '<span class="badge badge-soon">Due soon</span>';
+      else if (status === 'overdue') badgeHtml = '<span class="badge badge-overdue">Overdue</span>';
+      else if (currentMileage && (!t.intervalMiles || t.intervalMiles === 0)) badgeHtml = '<span class="badge badge-time">Check date</span>';
       return `<div class="task-card">
         <div class="task-name">${t.name}</div>
         <div class="task-interval">${t.interval}</div>
@@ -538,6 +686,86 @@
         ${badgeHtml}
       </div>`;
     }).join('');
+  }
+
+  function scrollChatToBottom() {
+    const el = document.getElementById('chatMessages');
+    el.scrollTop = el.scrollHeight;
+  }
+
+  function renderChatMessages() {
+    const container = document.getElementById('chatMessages');
+    const empty = document.getElementById('chatEmpty');
+
+    if (chatMessages.length === 0) {
+      empty.style.display = 'block';
+      return;
+    }
+
+    empty.style.display = 'none';
+
+    // Remove existing message elements (keep empty div)
+    Array.from(container.children).forEach(child => {
+      if (child.id !== 'chatEmpty') child.remove();
+    });
+
+    chatMessages.forEach(msg => {
+      const div = document.createElement('div');
+      div.className = `message message-${msg.role} ${msg.thinking ? 'message-thinking' : ''}`;
+      div.innerHTML = `<div class="message-bubble">${msg.content.replace(/\n/g, '<br>')}</div>`;
+      container.appendChild(div);
+    });
+
+    scrollChatToBottom();
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text || isChatLoading || !currentVehicle) return;
+
+    input.value = '';
+    isChatLoading = true;
+    document.getElementById('chatSendBtn').disabled = true;
+
+    chatMessages.push({ role: 'user', content: text });
+    chatMessages.push({ role: 'assistant', content: 'Thinking...', thinking: true });
+    renderChatMessages();
+
+    // Build messages array for API (exclude thinking placeholder)
+    const apiMessages = chatMessages
+      .filter(m => !m.thinking)
+      .map(m => ({ role: m.role, content: m.content }));
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ vehicle: currentVehicle, messages: apiMessages }),
+      });
+
+      const data = await res.json();
+
+      // Remove thinking placeholder
+      chatMessages = chatMessages.filter(m => !m.thinking);
+
+      if (!res.ok) throw new Error(data.error || 'Something went wrong');
+
+      chatMessages.push({ role: 'assistant', content: data.reply });
+
+    } catch (err) {
+      chatMessages = chatMessages.filter(m => !m.thinking);
+      chatMessages.push({ role: 'assistant', content: 'Sorry, something went wrong. Please try again.' });
+    }
+
+    isChatLoading = false;
+    document.getElementById('chatSendBtn').disabled = false;
+    renderChatMessages();
+  }
+
+  function useSuggestion(text) {
+    document.getElementById('chatInput').value = text;
+    sendMessage();
   }
 
   async function handleLookup() {
@@ -557,7 +785,13 @@
     document.getElementById('loadingState').style.display = 'block';
     document.getElementById('emptyState').style.display = 'none';
     document.getElementById('vehicleCard').style.display = 'none';
+    document.getElementById('mileageStatus').style.display = 'none';
     document.getElementById('maintenanceSections').style.display = 'none';
+    document.getElementById('chatSection').style.display = 'none';
+
+    // Reset chat
+    chatMessages = [];
+    currentVehicle = null;
 
     try {
       const res = await fetch('/api/maintenance', {
@@ -583,6 +817,17 @@
         return;
       }
 
+      // Store vehicle for chat
+      currentVehicle = {
+        year: result.year,
+        make: result.make,
+        model: result.model,
+        trim: result.trim,
+        engine: result.engine,
+        drive: result.drive,
+        fuel: result.fuel,
+      };
+
       document.getElementById('vehicleTitle').textContent = `${result.year} ${result.make} ${result.model}`;
       const sub = [result.trim, result.engine, result.drive].filter(Boolean).join(' · ');
       document.getElementById('vehicleSubtitle').textContent = sub || result.fuel || '';
@@ -591,14 +836,9 @@
       document.getElementById('manualLink').href = MANUAL_LINKS[makeKey] || 'https://www.vehiclehistory.com/vin-check/';
       document.getElementById('vehicleCard').style.display = 'flex';
 
-      // Show mileage context banner if mileage was entered
       if (currentMileage) {
-        const formatted = currentMileage.toLocaleString();
-        document.getElementById('mileageBannerText').textContent =
-          `Showing status based on ${formatted} miles. Task badges reflect estimated intervals — enter last service mileage for more precision.`;
-        document.getElementById('mileageBanner').style.display = 'flex';
-      } else {
-        document.getElementById('mileageBanner').style.display = 'none';
+        document.getElementById('mileageDisplay').textContent = currentMileage.toLocaleString();
+        document.getElementById('mileageStatus').style.display = 'flex';
       }
 
       renderTasks('oilTasks', result.oil, currentMileage);
@@ -606,6 +846,19 @@
       renderTasks('filterTasks', result.filters, currentMileage);
       renderTasks('serviceTasks', result.service, currentMileage);
       document.getElementById('maintenanceSections').style.display = 'block';
+
+      // Set up chat
+      const vehicleName = `${result.year} ${result.make} ${result.model}`;
+      document.getElementById('chatTitle').textContent = `Ask about your ${vehicleName}`;
+      document.getElementById('chatSubtitle').textContent = 'Ask about maintenance, warning lights, or shop recommendations';
+
+      // Render suggestions
+      const suggestions = getSuggestions(currentVehicle);
+      document.getElementById('chatSuggestions').innerHTML = suggestions
+        .map(s => `<button class="suggestion-btn" onclick="useSuggestion('${s.replace(/'/g, "\\'")}')">${s}</button>`)
+        .join('');
+
+      document.getElementById('chatSection').style.display = 'block';
 
     } catch (err) {
       document.getElementById('loadingState').style.display = 'none';
