@@ -1,5 +1,4 @@
 # Vehicle Maintenance Guide — Vercel Deployment
-
 ## What's in this project
 ```
 vin-maintenance-app/
