@@ -10,7 +10,6 @@ vin-maintenance-app/
 └── public/
     └── index.html       # Frontend app
 ```
-
 ---
 
 ## How to deploy (step by step)
