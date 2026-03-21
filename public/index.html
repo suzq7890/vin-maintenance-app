@@ -270,9 +270,22 @@
     }
 
     .mileage-status strong { color: var(--text); }
-    .status-legend { display: flex; gap: 14px; margin-left: auto; flex-wrap: wrap; }
-    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-3); }
-    .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .status-legend { display: flex; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+    .filter-btn {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 500;
+      padding: 3px 10px; border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-3);
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .filter-btn:hover { border-color: var(--border-strong); color: var(--text-2); }
+    .filter-btn.active-ok { background: var(--green-bg); border-color: var(--green-text); color: var(--green-text); }
+    .filter-btn.active-soon { background: var(--amber-bg); border-color: var(--amber-text); color: var(--amber-text); }
+    .filter-btn.active-overdue { background: var(--red-bg); border-color: var(--red-text); color: var(--red-text); }
+    .legend-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
     .dot-ok { background: var(--green-text); }
     .dot-soon { background: var(--amber-text); }
     .dot-overdue { background: var(--red-text); }
@@ -581,37 +594,33 @@
   <!-- Mileage status (schedule mode only) -->
   <div id="mileageStatus" class="mileage-status" style="display:none;">
     <span>Showing status for <strong id="mileageDisplay"></strong> miles</span>
-    <div class="status-legend">
-      <div class="legend-item"><div class="legend-dot dot-ok"></div>On schedule</div>
-      <div class="legend-item"><div class="legend-dot dot-soon"></div>Due soon</div>
-      <div class="legend-item"><div class="legend-dot dot-overdue"></div>Overdue</div>
-    </div>
+    <div class="status-legend" id="statusLegend"></div>
   </div>
 
   <!-- Maintenance schedule -->
   <div id="maintenanceSections" class="maintenance" style="display:none;">
-    <div class="section">
+    <div class="section" id="sectionOil">
       <div class="section-header">
         <svg class="section-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.3"/><path d="M10 6v4l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
         <span class="section-label">Oil &amp; fluids</span>
       </div>
       <div class="task-grid" id="oilTasks"></div>
     </div>
-    <div class="section">
+    <div class="section" id="sectionTires">
       <div class="section-header">
         <svg class="section-icon" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.3"/><circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M10 3v2M10 15v2M3 10h2M15 10h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
         <span class="section-label">Tires &amp; brakes</span>
       </div>
       <div class="task-grid" id="tireTasks"></div>
     </div>
-    <div class="section">
+    <div class="section" id="sectionFilters">
       <div class="section-header">
         <svg class="section-icon" viewBox="0 0 20 20" fill="none"><rect x="3" y="7" width="14" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M7 7V5.5a3 3 0 016 0V7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M7 11h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
         <span class="section-label">Filters &amp; belts</span>
       </div>
       <div class="task-grid" id="filterTasks"></div>
     </div>
-    <div class="section">
+    <div class="section" id="sectionService">
       <div class="section-header">
         <svg class="section-icon" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M10 4v12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.3"/></svg>
         <span class="section-label">Scheduled service intervals</span>
@@ -705,6 +714,8 @@
   let isChatLoading = false;
   let maintenanceLoaded = false;
   let activeMode = null;
+  let activeFilter = null;
+  let maintenanceData = { oil: [], tires: [], filters: [], service: [] };
 
   function getSuggestions(vehicle) {
     return [
@@ -721,6 +732,72 @@
     if (pct >= 1.0) return 'overdue';
     if (pct >= 0.7) return 'soon';
     return 'ok';
+  }
+
+  function buildStatusLegend() {
+    if (!currentMileage) return;
+    const allTasks = [
+      ...maintenanceData.oil,
+      ...maintenanceData.tires,
+      ...maintenanceData.filters,
+      ...maintenanceData.service,
+    ];
+    const statuses = new Set(allTasks.map(t => getMileageStatus(t.intervalMiles, currentMileage)).filter(Boolean));
+    const legend = document.getElementById('statusLegend');
+    legend.innerHTML = '';
+    const order = [['ok','dot-ok','active-ok','On schedule'],['soon','dot-soon','active-soon','Due soon'],['overdue','dot-overdue','active-overdue','Overdue']];
+    order.forEach(([status, dotClass, activeClass, label]) => {
+      if (!statuses.has(status)) return;
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn';
+      btn.dataset.status = status;
+      btn.dataset.activeClass = activeClass;
+      btn.innerHTML = `<div class="legend-dot ${dotClass}"></div>${label}`;
+      btn.addEventListener('click', () => toggleFilter(status, activeClass, btn));
+      legend.appendChild(btn);
+    });
+  }
+
+  function toggleFilter(status, activeClass, btn) {
+    if (activeFilter === status) {
+      // Clear filter
+      activeFilter = null;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove(b.dataset.activeClass));
+      applyFilter(null);
+    } else {
+      // Set filter
+      activeFilter = status;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove(b.dataset.activeClass));
+      btn.classList.add(activeClass);
+      applyFilter(status);
+    }
+  }
+
+  function applyFilter(status) {
+    const categories = [
+      { tasks: maintenanceData.oil, gridId: 'oilTasks', sectionId: 'sectionOil' },
+      { tasks: maintenanceData.tires, gridId: 'tireTasks', sectionId: 'sectionTires' },
+      { tasks: maintenanceData.filters, gridId: 'filterTasks', sectionId: 'sectionFilters' },
+      { tasks: maintenanceData.service, gridId: 'serviceTasks', sectionId: 'sectionService' },
+    ];
+
+    categories.forEach(({ tasks, gridId, sectionId }) => {
+      const grid = document.getElementById(gridId);
+      const section = document.getElementById(sectionId);
+      if (!grid || !section) return;
+
+      const cards = grid.querySelectorAll('.task-card');
+      let visibleCount = 0;
+
+      cards.forEach((card, i) => {
+        const taskStatus = getMileageStatus(tasks[i]?.intervalMiles, currentMileage);
+        const show = !status || taskStatus === status || (!taskStatus && status === null);
+        card.style.display = show ? '' : 'none';
+        if (show) visibleCount++;
+      });
+
+      section.style.display = visibleCount === 0 ? 'none' : '';
+    });
   }
 
   function selectMode(mode) {
@@ -799,11 +876,7 @@
           <div class="task-grid" id="serviceTasks"></div>
         </div>`;
 
-      renderTasks('oilTasks', result.oil, currentMileage);
-      renderTasks('tireTasks', result.tires, currentMileage);
-      renderTasks('filterTasks', result.filters, currentMileage);
-      renderTasks('serviceTasks', result.service, currentMileage);
-
+      storeAndRenderAll(result);
       if (currentMileage) document.getElementById('mileageStatus').style.display = 'flex';
       maintenanceLoaded = true;
 
@@ -830,6 +903,21 @@
         ${badgeHtml}
       </div>`;
     }).join('');
+  }
+
+  function storeAndRenderAll(result) {
+    maintenanceData = {
+      oil: result.oil || [],
+      tires: result.tires || [],
+      filters: result.filters || [],
+      service: result.service || [],
+    };
+    activeFilter = null;
+    renderTasks('oilTasks', maintenanceData.oil, currentMileage);
+    renderTasks('tireTasks', maintenanceData.tires, currentMileage);
+    renderTasks('filterTasks', maintenanceData.filters, currentMileage);
+    renderTasks('serviceTasks', maintenanceData.service, currentMileage);
+    if (currentMileage) buildStatusLegend();
   }
 
   function scrollChatToBottom() {
@@ -943,8 +1031,11 @@
     currentVehicle = null;
     maintenanceLoaded = false;
     activeMode = null;
+    activeFilter = null;
+    maintenanceData = { oil: [], tires: [], filters: [], service: [] };
     document.getElementById('modeSchedule').classList.remove('active');
     document.getElementById('modeChat').classList.remove('active');
+    document.getElementById('statusLegend').innerHTML = '';
 
     try {
       // Just decode the VIN — don't load maintenance yet
@@ -974,10 +1065,7 @@
 
       // Pre-cache maintenance data from this response
       if (result.oil) {
-        renderTasks('oilTasks', result.oil, currentMileage);
-        renderTasks('tireTasks', result.tires, currentMileage);
-        renderTasks('filterTasks', result.filters, currentMileage);
-        renderTasks('serviceTasks', result.service, currentMileage);
+        storeAndRenderAll(result);
         maintenanceLoaded = true;
       }
 
