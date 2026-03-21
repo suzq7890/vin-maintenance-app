@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vehicle Maintenance Guide</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f4f0;
+      --surface: #ffffff;
+      --surface-2: #eeede9;
+      --border: #d6d4cd;
+      --border-strong: #b0aea6;
+      --text: #1a1917;
+      --text-2: #5a5852;
+      --text-3: #8a8880;
+      --accent: #1a1917;
+      --green-bg: #eaf3de;
+      --green-text: #3b6d11;
+      --amber-bg: #faeeda;
+      --amber-text: #854f0b;
+      --red-bg: #fcebeb;
+      --red-text: #a32d2d;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .app { max-width: 780px; margin: 0 auto; }
+
+    .header {
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 8px;
+    }
+
+    .header h1 {
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+    }
+
+    .header p {
+      font-size: 14px;
+      color: var(--text-2);
+      margin-top: 6px;
+      line-height: 1.6;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field-vin { flex: 2; min-width: 200px; }
+    .field-mileage { flex: 1; min-width: 130px; }
+
+    .field-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--text-3);
+    }
+
+    .vin-input, .mileage-input {
+      height: 46px;
+      padding: 0 16px;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      font-size: 15px;
+      width: 100%;
+    }
+
+    .vin-input {
+      font-family: 'Courier New', Courier, monospace;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .vin-input::placeholder {
+      letter-spacing: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      font-size: 14px;
+      color: var(--text-3);
+    }
+
+    .mileage-input::placeholder { color: var(--text-3); font-size: 14px; }
+
+    .vin-input:focus, .mileage-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(26,25,23,0.08);
+    }
+
+    .lookup-btn {
+      height: 46px;
+      padding: 0 22px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.15s;
+      flex-shrink: 0;
+      align-self: flex-end;
+    }
+
+    .lookup-btn:hover { opacity: 0.85; }
+    .lookup-btn:disabled { opacity: 0.35; cursor: default; }
+
+    .form-hint {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: 6px;
+    }
+
+    .error-msg {
+      font-size: 14px;
+      color: var(--red-text);
+      background: var(--red-bg);
+      border: 1px solid #f0c0c0;
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      margin-top: 1.25rem;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 3.5rem 1rem;
+      color: var(--text-2);
+      font-size: 14px;
+    }
+
+    .loading-spinner {
+      width: 28px;
+      height: 28px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 12px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .vehicle-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      margin-top: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .vehicle-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 4px;
+    }
+
+    .vehicle-title { font-size: 20px; font-weight: 600; letter-spacing: -0.3px; }
+    .vehicle-subtitle { font-size: 13px; color: var(--text-2); margin-top: 3px; }
+
+    .manual-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      height: 38px;
+      padding: 0 16px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+
+    .manual-btn:hover { background: var(--border); }
+
+    .maintenance { margin-top: 2rem; }
+    .section { margin-bottom: 2rem; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-icon { width: 20px; height: 20px; flex-shrink: 0; color: var(--text-3); }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--text-2);
+    }
+
+    .task-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 10px;
+    }
+
+    .task-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .task-name { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+    .task-interval { font-size: 12px; color: var(--text-2); }
+
+    .task-note {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: 8px;
+      line-height: 1.55;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 9px;
+      border-radius: 20px;
+      margin-top: 10px;
+    }
+
+    .badge-ok { background: var(--green-bg); color: var(--green-text); }
+    .badge-warning { background: var(--amber-bg); color: var(--amber-text); }
+    .badge-overdue { background: var(--red-bg); color: var(--red-text); }
+    .badge-time { background: var(--surface-2); color: var(--text-3); }
+
+    .mileage-banner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      margin-bottom: 1.5rem;
+      font-size: 13px;
+      color: var(--text-2);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 1rem 2rem;
+      color: var(--text-3);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .empty-icon { font-size: 36px; margin-bottom: 14px; display: block; }
+
+    .disclosure {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 2.5rem;
+      padding: 14px 16px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+
+    .disclosure svg { flex-shrink: 0; margin-top: 1px; color: var(--text-3); }
+
+    .disclosure p {
+      font-size: 12px;
+      color: var(--text-2);
+      line-height: 1.65;
+    }
+
+    @media (max-width: 520px) {
+      .form-row { flex-direction: column; }
+      .field-vin, .field-mileage { min-width: 100%; }
+      .lookup-btn { width: 100%; height: 44px; }
+      .vehicle-card { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="header-eyebrow">AI-powered</div>
+    <h1>Vehicle maintenance guide</h1>
+    <p>Enter your VIN to get a personalized maintenance schedule and a link to your owner's manual.</p>
+  </div>
+
+  <div style="margin-bottom: 0.5rem;">
+    <div class="form-row">
+      <div class="field field-vin">
+        <label class="field-label" for="vinInput">VIN</label>
+        <input
+          class="vin-input"
+          id="vinInput"
+          type="text"
+          maxlength="17"
+          placeholder="e.g. 5NPE34AF4KH757657"
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+      <div class="field field-mileage">
+        <label class="field-label" for="mileageInput">Current mileage <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label>
+        <input
+          class="mileage-input"
+          id="mileageInput"
+          type="text"
+          inputmode="numeric"
+          placeholder="e.g. 47000"
+          autocomplete="off"
+        />
+      </div>
+      <button class="lookup-btn" id="lookupBtn" onclick="handleLookup()">Look up vehicle</button>
+    </div>
+    <div class="form-hint" id="vinHint">VIN is 17 characters &nbsp;·&nbsp; Found on your dashboard, door jamb, or vehicle title</div>
+  </div>
+
+  <div id="errorMsg" class="error-msg" style="display:none;"></div>
+  <div id="loadingState" class="loading" style="display:none;">
+    <div class="loading-spinner"></div>
+    Decoding VIN and building your maintenance schedule&hellip;
+  </div>
+
+  <div id="vehicleCard" class="vehicle-card" style="display:none;">
+    <div>
+      <div class="vehicle-eyebrow">Vehicle identified</div>
+      <div class="vehicle-title" id="vehicleTitle"></div>
+      <div class="vehicle-subtitle" id="vehicleSubtitle"></div>
+    </div>
+    <a id="manualLink" href="#" target="_blank" rel="noopener" class="manual-btn">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M4 5h6M4 7h6M4 9h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+      Owner's manual &rarr;
+    </a>
+  </div>
+
+  <div id="maintenanceSections" class="maintenance" style="display:none;">
+    <div id="mileageBanner" class="mileage-banner" style="display:none;">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M7 4v3l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+      </svg>
+      <span id="mileageBannerText"></span>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <svg class="section-icon" viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M10 6v4l2.5 2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+        <span class="section-label">Oil &amp; fluids</span>
+      </div>
+      <div class="task-grid" id="oilTasks"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <svg class="section-icon" viewBox="0 0 20 20" fill="none">
+          <circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.3"/>
+          <circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M10 3v2M10 15v2M3 10h2M15 10h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+        <span class="section-label">Tires &amp; brakes</span>
+      </div>
+      <div class="task-grid" id="tireTasks"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <svg class="section-icon" viewBox="0 0 20 20" fill="none">
+          <rect x="3" y="7" width="14" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/>
+          <path d="M7 7V5.5a3 3 0 016 0V7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          <path d="M7 11h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+        <span class="section-label">Filters &amp; belts</span>
+      </div>
+      <div class="task-grid" id="filterTasks"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <svg class="section-icon" viewBox="0 0 20 20" fill="none">
+          <path d="M4 10h12M10 4v12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+          <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.3"/>
+        </svg>
+        <span class="section-label">Scheduled service intervals</span>
+      </div>
+      <div class="task-grid" id="serviceTasks"></div>
+    </div>
+  </div>
+
+  <div id="emptyState" class="empty-state">
+    <span class="empty-icon">&#128663;</span>
+    Enter your VIN above to get started.
+  </div>
+
+  <div class="disclosure">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.2"/>
+      <path d="M7 6v4M7 4.5v.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+    <p>Maintenance information is AI-generated based on manufacturer guidelines and is provided for general reference only. Intervals and specifications may vary by driving conditions, region, and model variant. Always consult your owner's manual or a certified technician before performing safety-critical repairs.</p>
+  </div>
+
+</div>
+
+<script>
+  const MANUAL_LINKS = {
+    'hyundai': 'https://www.hyundaiusa.com/us/en/customer-care/owner-resources.html',
+    'kia': 'https://owners.kia.com/us/en/vehicle-resources/owner-manuals.html',
+    'genesis': 'https://www.genesis.com/us/en/owners/owners-manual.html',
+    'toyota': 'https://www.toyota.com/owners/resources/warranty-owners-manuals',
+    'lexus': 'https://www.lexus.com/en/resources/owners-manuals',
+    'honda': 'https://owners.honda.com/vehicles/information/owner-information',
+    'acura': 'https://owners.acura.com/vehicles/information/owner-information',
+    'nissan': 'https://owners.nissanusa.com/content/techpub/ManualsAndGuides/index.html',
+    'infiniti': 'https://www.infinitiusa.com/owners',
+    'ford': 'https://owner.ford.com/tools/account/how-tos/owner-manuals.html',
+    'lincoln': 'https://www.lincoln.com/lincoln-owner/resources/',
+    'chevrolet': 'https://my.chevrolet.com/learn/owners-manual',
+    'gmc': 'https://my.gmc.com/content/mygmc/en/home/myVehicle/resources.html',
+    'buick': 'https://my.buick.com/content/mybuick/en/home/myVehicle/resources.html',
+    'cadillac': 'https://my.cadillac.com/content/mycadillac/en/home/myVehicle/resources.html',
+    'jeep': 'https://www.mopar.com/en-us/care/manuals.html',
+    'ram': 'https://www.mopar.com/en-us/care/manuals.html',
+    'dodge': 'https://www.mopar.com/en-us/care/manuals.html',
+    'chrysler': 'https://www.mopar.com/en-us/care/manuals.html',
+    'subaru': 'https://www.subaru.com/services/connect/manuals.html',
+    'mazda': 'https://www.mazdausa.com/owners/resources',
+    'volkswagen': 'https://www.vw.com/en/models/resources/owners-manuals.html',
+    'audi': 'https://www.audiusa.com/us/web/en/owners.html',
+    'bmw': 'https://www.bmwusa.com/explore/bmwid-app/digital-owners-manual.html',
+    'mini': 'https://www.miniusa.com/owners/resources.html',
+    'mercedes': 'https://www.mercedes-benz.com/en/vehicles/consumer/digital-owner-s-manual/',
+    'mercedes-benz': 'https://www.mercedes-benz.com/en/vehicles/consumer/digital-owner-s-manual/',
+    'volvo': 'https://www.volvocars.com/us/support/manuals',
+    'tesla': 'https://www.tesla.com/ownersmanual/',
+    'porsche': 'https://tequipment.porsche.com/tequipment/en/owner-s-manual.html',
+    'land rover': 'https://www.landroverusa.com/owners/car-manuals.html',
+    'jaguar': 'https://www.jaguarusa.com/owners/index.html',
+  };
+
+  // Sanitize mileage input to numbers only
+  document.getElementById('mileageInput').addEventListener('input', function () {
+    this.value = this.value.replace(/[^0-9]/g, '');
+  });
+
+  document.getElementById('vinInput').addEventListener('input', function () {
+    const val = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+    this.value = val;
+    document.getElementById('vinHint').textContent =
+      val.length + ' / 17 characters\u00a0\u00b7\u00a0 Found on your dashboard, door jamb, or vehicle title';
+  });
+
+  document.getElementById('vinInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') handleLookup();
+  });
+
+  document.getElementById('mileageInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') handleLookup();
+  });
+
+  // Determine badge based on mileage position within interval
+  function getMileageBadge(currentMileage, intervalMiles) {
+    if (!currentMileage || !intervalMiles || intervalMiles === 0) {
+      return null; // time-based or no mileage entered
+    }
+    const remainder = currentMileage % intervalMiles;
+    const pct = remainder / intervalMiles;
+    if (pct >= 1.0) return { cls: 'badge-overdue', label: 'Overdue' };
+    if (pct >= 0.7) return { cls: 'badge-warning', label: 'Due soon' };
+    return { cls: 'badge-ok', label: 'On schedule' };
+  }
+
+  function renderTasks(id, tasks, currentMileage) {
+    const el = document.getElementById(id);
+    el.innerHTML = (tasks || []).map(t => {
+      const badge = getMileageBadge(currentMileage, t.intervalMiles);
+      const badgeHtml = badge
+        ? `<span class="badge ${badge.cls}">${badge.label}</span>`
+        : '';
+      return `<div class="task-card">
+        <div class="task-name">${t.name}</div>
+        <div class="task-interval">${t.interval}</div>
+        ${t.note ? `<div class="task-note">${t.note}</div>` : ''}
+        ${badgeHtml}
+      </div>`;
+    }).join('');
+  }
+
+  async function handleLookup() {
+    const vin = document.getElementById('vinInput').value.trim().toUpperCase();
+    const mileageRaw = document.getElementById('mileageInput').value.trim();
+    const currentMileage = mileageRaw ? parseInt(mileageRaw, 10) : null;
+
+    document.getElementById('errorMsg').style.display = 'none';
+
+    if (vin.length !== 17) {
+      document.getElementById('errorMsg').textContent = 'Please enter a complete 17-character VIN.';
+      document.getElementById('errorMsg').style.display = 'block';
+      return;
+    }
+
+    document.getElementById('lookupBtn').disabled = true;
+    document.getElementById('loadingState').style.display = 'block';
+    document.getElementById('emptyState').style.display = 'none';
+    document.getElementById('vehicleCard').style.display = 'none';
+    document.getElementById('maintenanceSections').style.display = 'none';
+
+    try {
+      const res = await fetch('/api/maintenance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ vin }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Server error');
+      }
+
+      const result = await res.json();
+
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('lookupBtn').disabled = false;
+
+      if (!result.valid) {
+        document.getElementById('errorMsg').textContent = 'That VIN could not be decoded. Please double-check and try again.';
+        document.getElementById('errorMsg').style.display = 'block';
+        document.getElementById('emptyState').style.display = 'block';
+        return;
+      }
+
+      document.getElementById('vehicleTitle').textContent = `${result.year} ${result.make} ${result.model}`;
+      const sub = [result.trim, result.engine, result.drive].filter(Boolean).join(' · ');
+      document.getElementById('vehicleSubtitle').textContent = sub || result.fuel || '';
+
+      const makeKey = (result.make || '').toLowerCase().trim();
+      document.getElementById('manualLink').href = MANUAL_LINKS[makeKey] || 'https://www.vehiclehistory.com/vin-check/';
+      document.getElementById('vehicleCard').style.display = 'flex';
+
+      // Show mileage context banner if mileage was entered
+      if (currentMileage) {
+        const formatted = currentMileage.toLocaleString();
+        document.getElementById('mileageBannerText').textContent =
+          `Showing status based on ${formatted} miles. Task badges reflect estimated intervals — enter last service mileage for more precision.`;
+        document.getElementById('mileageBanner').style.display = 'flex';
+      } else {
+        document.getElementById('mileageBanner').style.display = 'none';
+      }
+
+      renderTasks('oilTasks', result.oil, currentMileage);
+      renderTasks('tireTasks', result.tires, currentMileage);
+      renderTasks('filterTasks', result.filters, currentMileage);
+      renderTasks('serviceTasks', result.service, currentMileage);
+      document.getElementById('maintenanceSections').style.display = 'block';
+
+    } catch (err) {
+      document.getElementById('loadingState').style.display = 'none';
+      document.getElementById('lookupBtn').disabled = false;
+      document.getElementById('errorMsg').textContent = 'Something went wrong: ' + err.message;
+      document.getElementById('errorMsg').style.display = 'block';
+      document.getElementById('emptyState').style.display = 'block';
+    }
+  }
+</script>
+</body>
+</html>
