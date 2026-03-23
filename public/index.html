@@ -674,7 +674,7 @@
 
 <script>
   const MANUAL_LINKS = {
-    'hyundai': 'https://www.hyundaiusa.com/us/en/customer-care/owner-resources.html',
+    'hyundai': 'https://ownersmanual.hyundai.com/',
     'kia': 'https://owners.kia.com/us/en/vehicle-resources/owner-manuals.html',
     'genesis': 'https://www.genesis.com/us/en/owners/owners-manual.html',
     'toyota': 'https://www.toyota.com/owners/resources/warranty-owners-manuals',
@@ -1052,7 +1052,12 @@
       document.getElementById('lookupBtn').disabled = false;
 
       if (!result.valid) {
-        document.getElementById('errorMsg').textContent = 'That VIN could not be decoded. Please double-check and try again.';
+        const messages = {
+          commercial: result.message || 'This appears to be a commercial or fleet vehicle. This tool is designed for personal passenger vehicles.',
+          invalid: result.message || 'This VIN appears to have a typo. Double-check for common mistakes: the letter O vs. zero (0), or the letter I vs. the number 1.',
+          not_found: result.message || 'This VIN could not be found. Please double-check and try again.',
+        };
+        document.getElementById('errorMsg').textContent = messages[result.reason] || 'That VIN could not be decoded. Please double-check and try again.';
         document.getElementById('errorMsg').style.display = 'block';
         document.getElementById('emptyState').style.display = 'block';
         return;
@@ -1061,6 +1066,7 @@
       currentVehicle = {
         year: result.year, make: result.make, model: result.model,
         trim: result.trim, engine: result.engine, drive: result.drive, fuel: result.fuel,
+        mileage: currentMileage || null,
       };
 
       // Pre-cache maintenance data from this response
