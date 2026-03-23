@@ -34,7 +34,13 @@ export default async function handler(req, res) {
     vehicle.fuel,
   ].filter(Boolean).join(' ');
 
+  const mileageContext = vehicle.mileage
+    ? `The owner has entered their current mileage as ${parseInt(vehicle.mileage).toLocaleString()} miles. Use this when answering questions about what's due, overdue, or coming up soon — do not ask for their mileage again.`
+    : 'The owner has not provided their current mileage.';
+
   const systemPrompt = `You are a knowledgeable automotive advisor helping the owner of a ${vehicleStr}.
+
+${mileageContext}
 
 Your role is to answer questions as if you have read and understood the owner's manual for this specific vehicle. You help the owner:
 - Understand what maintenance they actually need and when
@@ -49,7 +55,8 @@ Guidelines:
 - Be direct and honest — if a shop recommendation sounds like an upsell, say so clearly
 - If you're uncertain about a specific detail, say "I'd recommend verifying this in your owner's manual" rather than guessing
 - Keep responses concise — the user is often on their phone in a waiting room
-- Never recommend ignoring safety-critical maintenance`;
+- Never recommend ignoring safety-critical maintenance
+- Never ask for information the owner has already provided (mileage, make, model)`;
 
   try {
     const aiRes = await fetch('https://api.anthropic.com/v1/messages', {
