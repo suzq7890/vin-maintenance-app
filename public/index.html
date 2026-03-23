@@ -993,6 +993,26 @@
     sendMessage();
   }
 
+  // VIN check digit validation (position 9 must match calculated value)
+  function validateVinCheckDigit(vin) {
+    const transliteration = {
+      A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,
+      J:1,K:2,L:3,M:4,N:5,P:7,R:9,
+      S:2,T:3,U:4,V:5,W:6,X:7,Y:8,Z:9,
+      0:0,1:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9
+    };
+    const weights = [8,7,6,5,4,3,2,10,0,9,8,7,6,5,4,3,2];
+    let sum = 0;
+    for (let i = 0; i < 17; i++) {
+      const char = vin[i].toUpperCase();
+      if (transliteration[char] === undefined) return false;
+      sum += transliteration[char] * weights[i];
+    }
+    const remainder = sum % 11;
+    const checkDigit = remainder === 10 ? 'X' : String(remainder);
+    return checkDigit === vin[8].toUpperCase();
+  }
+
   document.getElementById('vinInput').addEventListener('input', function () {
     const val = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
     this.value = val;
@@ -1013,6 +1033,12 @@
 
     if (vin.length !== 17) {
       document.getElementById('errorMsg').textContent = 'Please enter a complete 17-character VIN.';
+      document.getElementById('errorMsg').style.display = 'block';
+      return;
+    }
+
+    if (!validateVinCheckDigit(vin)) {
+      document.getElementById('errorMsg').textContent = 'This VIN appears to have a typo. Common mistakes: the letter O instead of zero (0), or the letter I instead of the number 1. Please double-check and try again.';
       document.getElementById('errorMsg').style.display = 'block';
       return;
     }
