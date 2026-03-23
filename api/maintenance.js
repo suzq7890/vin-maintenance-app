@@ -23,8 +23,38 @@ export default async function handler(req, res) {
     const nhtsaData = await nhtsaRes.json();
     const r = nhtsaData.Results?.[0];
 
-    if (!r || !r.Make || r.ErrorCode === '11') {
-      return res.status(200).json({ valid: false });
+    // Detect commercial/fleet VINs (first char 1-5 = USA, but certain body classes indicate commercial)
+    const isCommercial = r && r.BodyClass && (
+      r.BodyClass.toLowerCase().includes('truck') && r.GVWR && r.GVWR.includes('Class') ||
+      r.VehicleType === 'TRAILER' ||
+      r.VehicleType === 'BUS' ||
+      r.VehicleType === 'INCOMPLETE VEHICLE'
+    );
+
+    if (isCommercial) {
+      return res.status(200).json({
+        valid: false,
+        reason: 'commercial',
+        message: 'This appears to be a commercial or fleet vehicle. This tool is designed for personal passenger vehicles.',
+      });
+    }
+
+    // Error code 11 = VIN not found in database
+    if (!r || !r.Make) {
+      return res.status(200).json({
+        valid: false,
+        reason: 'not_found',
+        message: 'This VIN could not be found in the vehicle database. Please double-check for typos — common mistakes include the letter O instead of zero, or the letter I instead of the number 1.',
+      });
+    }
+
+    // Error code 8 = invalid check digit (likely typo)
+    if (r.ErrorCode === '8') {
+      return res.status(200).json({
+        valid: false,
+        reason: 'invalid',
+        message: 'This VIN has an invalid check digit, which usually means there's a typo. Double-check your VIN and try again.',
+      });
     }
 
     vehicle = {
