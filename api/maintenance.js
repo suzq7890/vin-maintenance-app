@@ -53,7 +53,7 @@ export default async function handler(req, res) {
       return res.status(200).json({
         valid: false,
         reason: 'invalid',
-        message: 'This VIN has an invalid check digit, which usually means there's a typo. Double-check your VIN and try again.',
+        message: 'This VIN has an invalid check digit, which usually means there is a typo. Double-check your VIN and try again.',
       });
     }
 
